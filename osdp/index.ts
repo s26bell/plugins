@@ -9,20 +9,65 @@ export default class OSDP {
         this.api = api;
         this.initUpdateExtentBox();
 
-        // subscribe to add layer even to reorder the layers so graphicOSDP is always on top
-        this.api.layers.layerAdded.subscribe(layer => {
-            const map = (<any>window).RAMP.mapById(this.api.id);
-            const pos = Object.keys(map.esriMap._layers).length - 1;
-            map.fgpMapObj.reorderLayer('graphicsOSDP', pos)
-        });
-
         // add the OSDP grapic layer
         const myInter = setInterval(() => {
             if (typeof (<any>window).RAMP.mapById(this.api.id) !== 'undefined') {
                 (<any>window).RAMP.mapById(this.api.id).layersObj.addLayer('graphicsOSDP');
 
+                // subscribe to add layer even to reorder the layers so graphicOSDP is always on top
+                this.api.layersObj.layerAdded.subscribe(layer => {
+                    const map = (<any>window).RAMP.mapById(this.api.id);
+                    const pos = map.esriMap.graphicsLayerIds.length - 2;
+
+                    // use a timeout because viewer always try to reoder graphic layers...
+                    // if timeout is not an option, reoder layer when we add a new geometry
+                    // pos is kind of optional, we can put 1000 and we know it will be always on top
+                    setTimeout(() => {
+                        map.esriMap.reorderLayer('graphicsOSDP', pos);
+                    }, 5000);
+                });
+
+                // if config is empty-config, prevent zoom to append
+                if (document.getElementById('mapOSDP').getAttribute('rv-config') === 'empty-config.json') {
+                    this.preventZoom((<any>window).RAMP.mapById(this.api.id));
+                }
+
                 // need to call later because if called before map initilize, rest of function is skipped
                 this.setZoomEndEvent((<any>window).RAMP.mapById(this.api.id));
+
+                // dirty hack into viewer events not accessible from api plugin... should use with caution 
+                var unregisterListener = (<any>window).RAMP.mapInstances[0].$compile('<div>a</div>',false).$parent.$on('rvProjectiontChanged', (event) => console.log('Projection Changed: ' + event));
+
+                // Try to solve the "Remove layer twice fast doesn't fired event twice"
+                // *******************************
+                this.api.layersObj.layerAdded.subscribe(() => {
+                    // get all remove controls and add click event to trap when a layer is in the process of beeing removed
+                    $('rv-legend-control [aria-label="Remove"], rv-legend-control [aria-label="Retirer"]').on('click', (event)  => {
+                        // disable all remove button until the layer is removed. If we try to remove a layer when
+                        // the toast message is present, the vent will fail even if the layer is removed.
+                        $('rv-legend-control [aria-label="Remove"], rv-legend-control [aria-label="Retirer"]').attr('disabled', 'true');
+
+                        // trap when the remove is undo
+                        $('md-toast button').on('click', () => {
+                            // remove the disable so layer can be remove again
+                            $('rv-legend-control [aria-label="Remove"], rv-legend-control [aria-label="Retirer"]').removeAttr('disabled');
+                        });
+                    });
+                });
+                this.api.layersObj.layerRemoved.subscribe(() => {
+                    // remove the disable so layer can be remove again
+                    $('rv-legend-control [aria-label="Remove"], rv-legend-control [aria-label="Retirer"]').removeAttr('disabled');
+                });
+
+                // this.api.layersObj.layerAdded.subscribe(() => {
+                //     $('rv-legend-control [aria-label="Remove"], rv-legend-control [aria-label="Retirer"]').on('click', (event)  => {
+                //         (<any>window).RAMP.mapById(this.api.id).panels.legend.close();
+                //     });
+                // });
+                // this.api.layersObj.layerRemoved.subscribe(() => {
+                //     (<any>window).RAMP.mapById(this.api.id).panels.legend.open();
+                // });
+                // *******************************
 
                 clearInterval(myInter);
             }
@@ -44,6 +89,16 @@ export default class OSDP {
         mapi.extentChanged.subscribe(evt => {
             console.log(`new extent: ${JSON.stringify(evt)}`);
         });
+    }
+
+    preventZoom(mapi: any) {
+        // disable mouse and touch navigation
+        mapi.esriMap.disableMapNavigation();
+        mapi.esriMap.disablePinchZoom();
+
+        // set display none to +/- button to zoom in and out
+        const elem: any = document.getElementsByClassName('rv-mapnav-content')[0];
+        elem.style.display = 'none';
     }
 
     addLayerByUUID(uuid: string): void {
@@ -70,6 +125,20 @@ export default class OSDP {
             'url': 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_resource_potential_of_north_america_en/MapServer/0'
         };
         const myConfigLayer = myMap.layers.addLayer(layerJSON);
+    }
+
+    removeLayers(mapId: string) {
+        const myMap = (<any>window).RAMP.mapById(mapId);
+
+        // remove all layers using the legend block
+        // will also remove bad layers
+        const legentItem = [...myMap.ui.configLegend.children];
+        for (let item of legentItem) {
+            myMap.layersObj.removeLayer(item._legendBlock._blockConfig._layerId);
+        }
+
+        // close legend
+        myMap.panels.legend.close();
     }
 
     // function to fire on add layer and remove layer
@@ -146,14 +215,14 @@ export default class OSDP {
     addPointsGeometry(mapId: string, values: string): void {
         const myMap = (<any>window).RAMP.mapById(mapId);
         const input = this.inputParse(values, 'POINT');
-        const icon = 'M18 8c0-3.31-2.69-6-6-6S6 4.69 6 8c0 4.5 6 11 6 11s6-6.5 6-11zm-8 0c0-1.1.9-2 2-2s2 .9 2 2-.89 2-2 2c-1.1 0-2-.9-2-2zM5 20v2h14v-2H5z';
+        const icon = 'M 50 0 100 100 50 200 0 100 Z';
         const ptcords = JSON.parse(input);
 
         const graphicsOSDP = myMap.layers.getLayersById('graphicsOSDP')[0];
         for (let value of ptcords) {
             // create a point with unique id, we'll use an svg path for the icon
             let pt = new (<any>window).RAMP.GEO.Point(`location${Math.round(Math.random() * 100000)}`, [value[0], value[1]],
-                { style: 'ICON', icon: icon, colour: [255, 0, 0], width: 30 });
+                { style: 'ICON', icon: icon, colour: [255, 0, 0, 0.75], width: 25 });
 
             // add the point to the graphic layer
             graphicsOSDP.addGeometry(pt);
@@ -188,6 +257,12 @@ export default class OSDP {
         const myMap = (<any>window).RAMP.mapById(mapId);
         const graphicsOSDP = myMap.layers.getLayersById('graphicsOSDP')[0];
         graphicsOSDP.removeGeometry();
+
+        // remove hightlight marker and haze
+        myMap.esriMap._layerDivs.rv_hilight.clear();
+        if (typeof document.querySelectorAll('#mapOSDP .rv-map-highlight')[0] !== 'undefined') {
+            document.querySelectorAll('#mapOSDP .rv-map-highlight')[0].classList.toggle('rv-map-highlight')
+        }
     }
 
     zoomPt(mapId: string, value: string): void {

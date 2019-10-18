@@ -24,7 +24,8 @@
     "version": "2.0",
     "language": "en",
     "services": {
-      "proxyUrl": "https://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
+      "proxyUrl": "",
+      "corsEverywhere":true,
       "exportMapUrl": "https://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
       "export": {
         "title": {
@@ -75,68 +76,1023 @@
           "enabled": true
         }
       },
-      "legend": {
-        "type": "autopopulate",
-        "root": {
-          "name": "root",
-          "children": [
-            {
-              "layerId": "OSDP_Project"
-            },
-            {
-              "name": "A Group with a hidden layer",
-              "expanded": true,
-              "children": [
-                {
-                  "layerId": "rcs.35c51098-5cd8-44b0-b1cd-c8ce2f5dae89.en"
-                },
-                {
-                  "layerId": "rcs.e313db89-4219-4a5e-a543-772a86068710.en"
-                }
-              ]
-            }
-          ]
-        }
-      },
       "layers": [
         {
-          "id": "rcs.35c51098-5cd8-44b0-b1cd-c8ce2f5dae89.en",
-          "name": "Electric Transmission Line",
-          "layerType": "esriFeature",
-          "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1",
-          "catalogueUrl": "https://open.canada.ca/data/en/dataset/35c51098-5cd8-44b0-b1cd-c8ce2f5dae89"
+            "layerChoice": "esriFeature",
+            "layerType": "esriFeature",
+            "toggleSymbology": true,
+            "refreshInterval": 0,
+            "expectedResponseTime": 4000,
+            "tolerance": 5,
+            "controls": [
+                "opacity",
+                "visibility",
+                "boundingBox",
+                "query",
+                "snapshot",
+                "metadata",
+                "boundaryZoom",
+                "refresh",
+                "reload",
+                "remove",
+                "settings",
+                "data",
+                "styles"
+            ],
+            "disabledControls": [],
+            "state": {
+                "opacity": 1,
+                "visibility": true,
+                "boundingBox": false,
+                "query": true,
+                "snapshot": false,
+                "hovertips": true
+            },
+            "table": {
+                "title": "",
+                "maximize": false,
+                "lazyFilter": false,
+                "applyMap": false,
+                "showFilter": true,
+                "filterByExtent": false,
+                "searchStrictMatch": false,
+                "printEnabled": false,
+                "columns": [
+                    {
+                        "data": "OBJECTID",
+                        "title": "OBJECTID",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "project_id",
+                        "title": "Identifier",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_cat_en",
+                        "title": "Project Category",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_name_en",
+                        "title": "Title",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "proponent_en",
+                        "title": "Proponent",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "province_codes",
+                        "title": "Province(s)",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "location_en",
+                        "title": "Place",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "responsible_authority_en",
+                        "title": "Authorities",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_url_en",
+                        "title": "Regulator Website",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "proponent_url_en",
+                        "title": "Proponent Website",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "created_at",
+                        "title": "Start Date",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_state_en",
+                        "title": "Project State",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "latitude",
+                        "title": "Latitude",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "longitude",
+                        "title": "Longitude",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "updated_at",
+                        "title": "Last Update",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "description_en",
+                        "title": "Description",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "name": "Completed",
+            "id": "Completed***7176fb97",
+            "url": "https://webservices.maps.canada.ca/arcgis/rest/services/NRCan/OSDP_DevelopmentProjects_en/MapServer/0"
         },
         {
-          "id": "rcs.e313db89-4219-4a5e-a543-772a86068710.en",
-          "name": "Natural Gas Pipeline",
-          "layerType": "esriFeature",
-          "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2",
-          "catalogueUrl": "https://open.canada.ca/data/en/dataset/e313db89-4219-4a5e-a543-772a86068710"
+            "layerChoice": "esriFeature",
+            "layerType": "esriFeature",
+            "toggleSymbology": true,
+            "refreshInterval": 0,
+            "expectedResponseTime": 4000,
+            "tolerance": 5,
+            "controls": [
+                "opacity",
+                "visibility",
+                "boundingBox",
+                "query",
+                "snapshot",
+                "metadata",
+                "boundaryZoom",
+                "refresh",
+                "reload",
+                "remove",
+                "settings",
+                "data",
+                "styles"
+            ],
+            "disabledControls": [],
+            "state": {
+                "opacity": 1,
+                "visibility": true,
+                "boundingBox": false,
+                "query": true,
+                "snapshot": false,
+                "hovertips": true
+            },
+            "table": {
+                "title": "",
+                "maximize": false,
+                "lazyFilter": false,
+                "applyMap": false,
+                "showFilter": true,
+                "filterByExtent": false,
+                "searchStrictMatch": false,
+                "printEnabled": false,
+                "columns": [
+                    {
+                        "data": "OBJECTID",
+                        "title": "OBJECTID",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "project_id",
+                        "title": "Identifier",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_cat_en",
+                        "title": "Project Category",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_name_en",
+                        "title": "Title",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "proponent_en",
+                        "title": "Proponent",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "province_codes",
+                        "title": "Province(s)",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "location_en",
+                        "title": "Place",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "responsible_authority_en",
+                        "title": "Authorities",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_url_en",
+                        "title": "Regulator Website",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "proponent_url_en",
+                        "title": "Proponent Website",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "created_at",
+                        "title": "Start Date",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_state_en",
+                        "title": "Project State",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "latitude",
+                        "title": "Latitude",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "longitude",
+                        "title": "Longitude",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "updated_at",
+                        "title": "Last Update",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "description_en",
+                        "title": "Description",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "name": "In progress",
+            "id": "In progress***db762e06",
+            "url": "https://webservices.maps.canada.ca/arcgis/rest/services/NRCan/OSDP_DevelopmentProjects_en/MapServer/1"
         },
         {
-          "id":"OSDP_Project",
-          "layerType": "esriFeature",
-          "url": "https://webservices.maps.canada.ca/arcgis/rest/services/NRCan/osdp_projects_en/MapServer/0",
-          "details": {
-            "parser": "templates/test-script.js",
-            "template": "templates/test-template.html"
+            "layerChoice": "esriFeature",
+            "layerType": "esriFeature",
+            "toggleSymbology": true,
+            "refreshInterval": 0,
+            "expectedResponseTime": 4000,
+            "tolerance": 5,
+            "controls": [
+                "opacity",
+                "visibility",
+                "boundingBox",
+                "query",
+                "snapshot",
+                "metadata",
+                "boundaryZoom",
+                "refresh",
+                "reload",
+                "remove",
+                "settings",
+                "data",
+                "styles"
+            ],
+            "disabledControls": [],
+            "state": {
+                "opacity": 1,
+                "visibility": true,
+                "boundingBox": false,
+                "query": true,
+                "snapshot": false,
+                "hovertips": true
+            },
+            "table": {
+                "title": "",
+                "maximize": false,
+                "lazyFilter": false,
+                "applyMap": false,
+                "showFilter": true,
+                "filterByExtent": false,
+                "searchStrictMatch": false,
+                "printEnabled": false,
+                "columns": [
+                    {
+                        "data": "OBJECTID",
+                        "title": "OBJECTID",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "project_id",
+                        "title": "Identifier",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_cat_en",
+                        "title": "Project Category",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_name_en",
+                        "title": "Title",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "proponent_en",
+                        "title": "Proponent",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "province_codes",
+                        "title": "Province(s)",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "location_en",
+                        "title": "Place",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "responsible_authority_en",
+                        "title": "Authorities",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_url_en",
+                        "title": "Regulator Website",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "proponent_url_en",
+                        "title": "Proponent Website",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "created_at",
+                        "title": "Start Date",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "project_state_en",
+                        "title": "Project State",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "latitude",
+                        "title": "Latitude",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "longitude",
+                        "title": "Longitude",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "updated_at",
+                        "title": "Last Update",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "description_en",
+                        "title": "Description",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "name": "Terminated",
+            "id": "Terminated***00af6720",
+            "url": "https://webservices.maps.canada.ca/arcgis/rest/services/NRCan/OSDP_DevelopmentProjects_en/MapServer/2"
+        },
+        {
+            "layerChoice": "esriFeature",
+            "layerType": "esriFeature",
+            "toggleSymbology": true,
+            "refreshInterval": 0,
+            "expectedResponseTime": 4000,
+            "tolerance": 5,
+            "controls": [
+                "opacity",
+                "visibility",
+                "boundingBox",
+                "query",
+                "snapshot",
+                "metadata",
+                "boundaryZoom",
+                "refresh",
+                "reload",
+                "remove",
+                "settings",
+                "data",
+                "styles"
+            ],
+            "disabledControls": [],
+            "state": {
+                "opacity": 1,
+                "visibility": true,
+                "boundingBox": false,
+                "query": true,
+                "snapshot": false,
+                "hovertips": true
+            },
+            "table": {
+                "title": "",
+                "maximize": false,
+                "lazyFilter": false,
+                "applyMap": false,
+                "showFilter": true,
+                "filterByExtent": false,
+                "searchStrictMatch": false,
+                "printEnabled": false,
+                "columns": []
+            },
+            "name": "Linear projects",
+            "id": "Linear projects***d8812a1b",
+            "url": "https://webservices.maps.canada.ca/arcgis/rest/services/NRCan/OSDP_DevelopmentProjects_en/MapServer/3"
+        },
+        {
+            "controls": [
+                "opacity",
+                "visibility",
+                "boundingBox",
+                "query",
+                "snapshot",
+                "metadata",
+                "boundaryZoom",
+                "refresh",
+                "reload",
+                "settings",
+                "data",
+                "styles"
+            ],
+            "disabledControls": [],
+            "expectedResponseTime": 4000,
+            "id": "Water quality at monitoring sites, Canada – REST***2e712e0e",
+            "layerChoice": "esriFeature",
+            "layerType": "esriFeature",
+            "metadataUrl": "",
+            "name": "Water quality at monitoring sites, Canada – REST",
+            "refreshInterval": 0,
+            "state": {
+                "boundingBox": false,
+                "hovertips": true,
+                "opacity": 1,
+                "query": true,
+                "snapshot": false,
+                "visibility": true
+            },
+            "table": {
+                "applyMap": false,
+                "columns": [
+                    {
+                        "data": "OBJECTID",
+                        "filter": {
+                            "type": "number"
+                        },
+                        "searchable": true,
+                        "title": "OBJECTID",
+                        "visible": true
+                    },
+                    {
+                        "data": "StationID",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Site number",
+                        "visible": true
+                    },
+                    {
+                        "data": "Name",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Name",
+                        "visible": true
+                    },
+                    {
+                        "data": "Latitude",
+                        "filter": {
+                            "type": "number"
+                        },
+                        "searchable": true,
+                        "title": "Latitude",
+                        "visible": true
+                    },
+                    {
+                        "data": "Longitude",
+                        "filter": {
+                            "type": "number"
+                        },
+                        "searchable": true,
+                        "title": "Longitude",
+                        "visible": true
+                    },
+                    {
+                        "data": "E_Province",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Province",
+                        "visible": true
+                    },
+                    {
+                        "data": "E_WQI_CATEGORY",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Category",
+                        "visible": true
+                    },
+                    {
+                        "data": "IndexPeriod",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Sampling period",
+                        "visible": true
+                    },
+                    {
+                        "data": "isCoreStation",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Core site?",
+                        "visible": true
+                    },
+                    {
+                        "data": "E_StationClass",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Land use category",
+                        "visible": true
+                    },
+                    {
+                        "data": "DetailsURL1",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Site link",
+                        "visible": true
+                    },
+                    {
+                        "data": "E_SamplingVariables",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Tested substances",
+                        "visible": true
+                    },
+                    {
+                        "data": "Symbol",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Symbol",
+                        "visible": true
+                    },
+                    {
+                        "data": "Report_Year",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Report year",
+                        "visible": true
+                    },
+                    {
+                        "data": "E_DetailPageURL",
+                        "filter": {
+                            "type": "string"
+                        },
+                        "searchable": true,
+                        "title": "Details",
+                        "visible": true
+                    }
+                ],
+                "lazyFilter": false,
+                "maximize": false,
+                "title": ""
+            },
+            "toggleSymbology": true,
+            "tolerance": 5,
+            "url": "https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/5"
+        },
+        {
+            "controls": [
+                "opacity",
+                "visibility",
+                "boundingBox",
+                "query",
+                "snapshot",
+                "metadata",
+                "boundaryZoom",
+                "refresh",
+                "reload",
+                "remove",
+                "settings",
+                "data",
+                "styles"
+            ],
+            "disabledControls": [],
+            "expectedResponseTime": 4000,
+            "id": "Median after-tax income of households in 2015 (dollars) by census subdivision, 2016 Census***24bc9674",
+            "layerChoice": "esriFeature",
+            "layerType": "esriFeature",
+            "name": "Median after-tax income of households in 2015 (dollars) by census subdivision, 2016 Census",
+            "refreshInterval": 0,
+            "state": {
+                "boundingBox": false,
+                "hovertips": true,
+                "opacity": 1,
+                "query": true,
+                "snapshot": false,
+                "visibility": false
+            },
+            "toggleSymbology": true,
+            "tolerance": 5,
+            "url": "https://webservices.maps.canada.ca/arcgis/rest/services/StatCan/csd_median_household_income_after_tax_2016_en/MapServer/0",
+            "table": {
+                "columns": [
+                    {
+                        "data": "OBJECTID",
+                        "title": "OBJECTID_1",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "CSDUID_EN",
+                        "title": "Uniquely identifies a census subdivision",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "NAME_EN",
+                        "title": "Census subdivision name",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "CSDTYPE_EN",
+                        "title": "Census subdivision type\n",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "PROV_TERR_EN",
+                        "title": "Province or territory name",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "POP_2016_EN",
+                        "title": "Population, 2016",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "INC_IR_2016_EN",
+                        "title": "Incompletely enumerated Indian reserves and Indian settlements, 2016",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "LAND_AREA_EN",
+                        "title": "Land area in square kilometres, 2016",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "INC_MAP_CLASS_EN",
+                        "title": "Map classification",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "data": "TOTAL_PRIV_HOUSHOLDS_EN",
+                        "title": "Number of private households, 2016",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "data": "MEDIAN_AFTER_TAX_INCOME_EN",
+                        "title": "Median household after-tax income (2015$ constant dollars)",
+                        "visible": true,
+                        "searchable": true,
+                        "filter": {
+                            "type": "number"
+                        }
+                    }
+                ]
+            }
+        },
+        { 
+            "layerChoice":"ogcWms",
+            "layerType":"ogcWms",
+            "refreshInterval":0,
+            "expectedResponseTime":4000,
+            "suppressGetCapabilities":true,
+            "tolerance":50,
+            "layerEntries":[ 
+                { 
+                "init":true,
+                "id":"pub:WHSE_HUMAN_CULTURAL_ECONOMIC.MPI_ECON_MAJOR_PROJECTS_POINT",
+                "name":"BC"
+                }
+            ],
+            "controls": [
+              "opacity",
+              "visibility",
+              "boundingBox",
+              "query",
+              "snapshot",
+              "metadata",
+              "boundaryZoom",
+              "refresh",
+              "reload",
+              "remove",
+              "settings",
+              "data",
+              "styles"
+            ],
+            "url":"https://openmaps.gov.bc.ca/geo/pub/WHSE_HUMAN_CULTURAL_ECONOMIC.MPI_ECON_MAJOR_PROJECTS_POINT/ows?service=WMS&request=GetCapabilities",
+            "name":"BC",
+            "id":"BC***fa36baef",
+            "featureInfoMimeType":"text/html",
+            "details": {
+              "parser": "templates/wms-bc-script.js",
+              "template": "templates/wms-bc-template.html"
+            }
           }
+    ],
+    "legend": {
+        "legendChoice": "structured",
+        "root": {
+            "name": "root",
+            "children": [
+                {
+                  "layerId": "BC***fa36baef"
+                },
+                {
+                    "name": "Development Projects in Canada",
+                    "controls": [
+                      "opacity",
+                    "visibility",
+                    "symbology",
+                    "query",
+                    "reload",
+                    "settings"],
+                    "children": [
+                        {
+                            "layerId": "Completed***7176fb97"
+                        },
+                        {
+                            "layerId": "In progress***db762e06"
+                        },
+                        {
+                            "layerId": "Terminated***00af6720"
+                        },
+                        {
+                            "layerId": "Linear projects***d8812a1b"
+                        }
+                    ]
+                },
+                {
+                    "layerId": "Water quality at monitoring sites, Canada – REST***2e712e0e"
+                },
+                {
+                    "layerId": "Median after-tax income of households in 2015 (dollars) by census subdivision, 2016 Census***24bc9674"
+                }
+            ]
         },
-        {
-          "id": "geochronologie",
-          "name": "geochronologie.csv",
-          "layerType": "esriFeature",
-          "fileType": "csv",
-          "latField": "Lat. (NAD83)",
-          "longField": "Long. (NAD83)",
-          "nameField": "AGENO",
-          "url": "https://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/G%C3%A9ochronologie.csv",
-          "colour": "#00FF00",
-          "state": {
-            "visibility": false
-          }
-      }
-      ],
+        "type": "structured"
+    },
       "extentSets": [
         {
           "id": "EXT_NRCAN_Lambert_3978",

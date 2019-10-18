@@ -1,0 +1,267 @@
+{
+    "map": {
+        "components": {
+            "geoSearch": {
+                "enabled": true,
+                "showGraphic": true,
+                "showInfo": true
+            },
+            "mouseInfo": {
+                "enabled": false,
+                "spatialReference": {
+                    "wkid": 4326,
+                    "vcsWkid": null,
+                    "latestWkid": null,
+                    "latestVcsWkid": null,
+                    "wkt": ""
+                }
+            },
+            "northArrow": {
+                "enabled": false,
+                "arrowIcon": "",
+                "poleIcon": ""
+            },
+            "basemap": {
+                "enabled": true
+            },
+            "overviewMap": {
+                "enabled": false,
+                "expandFactor": 4,
+                "initiallyExpanded": true
+            },
+            "scaleBar": {
+                "enabled": false
+            },
+            "areaOfInterest": []
+        },
+        "initialBasemapId": "f7f9f166",
+        "extentSets": [{
+            "id": "EXT_NRCAN_Lambert_3978",
+            "default": {
+                "xmin": -4844430.556896179,
+                "ymin": -1052774.037634491,
+                "xmax": 5666163.380958509,
+                "ymax": 4170111.408136484
+            },
+            "full": {
+                "xmax": 5666163.380958509,
+                "xmin": -4844430.556896179,
+                "ymax": 4170111.408136484,
+                "ymin": -1052774.037634491
+            },
+            "maximum": {
+                "xmax": 5666163.380958509,
+                "xmin": -4844430.556896179,
+                "ymax": 4170111.408136484,
+                "ymin": -1052774.037634491
+            },
+            "spatialReference": {
+                "wkid": 3978
+            }
+        }],
+        "lodSets": [{
+            "id": "LOD_NRCAN_Lambert_3978",
+            "lods": [{
+                "level": 3,
+                "resolution": 7937.5158750317505,
+                "scale": 30000000
+            }, {
+                "level": 4,
+                "resolution": 4630.2175937685215,
+                "scale": 17500000
+            }, {
+                "level": 5,
+                "resolution": 2645.8386250105837,
+                "scale": 10000000
+            }, {
+                "level": 6,
+                "resolution": 1587.5031750063501,
+                "scale": 6000000
+            }, {
+                "level": 7,
+                "resolution": 926.0435187537042,
+                "scale": 3500000
+            }, {
+                "level": 8,
+                "resolution": 529.1677250021168,
+                "scale": 2000000
+            }, {
+                "level": 9,
+                "resolution": 317.50063500127004,
+                "scale": 1200000
+            }, {
+                "level": 10,
+                "resolution": 185.20870375074085,
+                "scale": 700000
+            }, {
+                "level": 11,
+                "resolution": 111.12522225044451,
+                "scale": 420000
+            }, {
+                "level": 12,
+                "resolution": 66.1459656252646,
+                "scale": 250000
+            }, {
+                "level": 13,
+                "resolution": 38.36466006265346,
+                "scale": 145000
+            }, {
+                "level": 14,
+                "resolution": 22.48962831258996,
+                "scale": 85000
+            }, {
+                "level": 15,
+                "resolution": 13.229193125052918,
+                "scale": 50000
+            }, {
+                "level": 16,
+                "resolution": 7.9375158750317505,
+                "scale": 30000
+            }, {
+                "level": 17,
+                "resolution": 4.6302175937685215,
+                "scale": 17500
+            }]
+        }],
+        "tileSchemas": [{
+            "id": "cad53536",
+            "name": "Canada",
+            "extentSetId": "EXT_NRCAN_Lambert_3978",
+            "lodSetId": "LOD_NRCAN_Lambert_3978",
+            "overviewUrl": {
+                "layerType": "esriTile",
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+            }
+        }],
+        "baseMaps": [{
+            "id": "f7f9f166",
+            "name": "Transport with labels",
+            "description": "This Canadian basemap provides geographic context with bilingual labels and an emphasis on transportation networks.  From Natural Resources Canada.",
+            "altText": "Transport with labels",
+            "thumbnailUrl": "",
+            "layers": [{
+                "id": "CBME_CBCE_HS_RO_3978",
+                "layerType": "esriFeature",
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer",
+                "opacity": 1
+            }, {
+                "id": "CBMT",
+                "layerType": "esriFeature",
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer",
+                "opacity": 0.75
+            }],
+            "tileSchemaId": "cad53536",
+            "attribution": {
+                "text": {
+                    "enabled": true
+                },
+                "logo": {
+                    "enabled": false
+                }
+            }
+        }],
+        "layers": [],
+        "legend": {
+            "legendChoice": "autopopulate",
+            "type": "autopopulate",
+            "root": {
+                "name": "root",
+                "children": []
+            }
+        }
+    },
+    "ui": {
+        "sideMenu": {
+            "items": [],
+            "logo": true
+        },
+        "fullscreen": false,
+        "theme": "default",
+        "logoUrl": "",
+        "failureFeedback": {
+            "failureMessage": "",
+            "failureImageUrl": ""
+        },
+        "title": "",
+        "appBar": {
+            "sideMenu": false,
+            "geoSearch": false,
+            "basemap": false,
+            "layers": false
+        },
+        "navBar": {
+            "zoom": "buttons",
+            "extra": []
+        },
+        "restrictNavigation": false,
+        "legend": {
+            "reorderable": false,
+            "allowImport": false,
+            "isOpen": {
+                "large": false,
+                "medium": false,
+                "small": false
+            }
+        },
+        "tableIsOpen": {
+            "id": "",
+            "large": false,
+            "medium": false,
+            "small": false
+        },
+        "widgetsWidget": ""
+    },
+    "services": {
+        "proxyUrl": "https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy",
+        "geometryUrl": "https://webservices.maps.canada.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer",
+        "exportMapUrl": "https://webservices.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+        "search": {
+            "serviceUrls": {
+                "geoNames": "https://geogratis.gc.ca/services/geoname/en/geonames.json",
+                "geoLocation": "https://geogratis.gc.ca/services/geolocation/en/locate?q=",
+                "geoSuggest": "https://geogratis.gc.ca/services/geolocation/en/suggest?q=",
+                "provinces": "https://geogratis.gc.ca/services/geoname/en/codes/province.json",
+                "types": "https://geogratis.gc.ca/services/geoname/en/codes/concise.json"
+            },
+            "disabledSearches": ["NTS", "FSA", "SCALE", "LAT/LNG"]
+        },
+        "export": {
+            "title": {
+                "isSelected": true,
+                "isSelectable": true,
+                "value": ""
+            },
+            "footnote": {
+                "isSelected": true,
+                "isSelectable": false,
+                "value": "© Her Majesty the Queen in Right of Canada, represented by the Minister of Natural Resources"
+            },
+            "map": {
+                "isSelected": true,
+                "isSelectable": false
+            },
+            "mapElements": {
+                "isSelected": true,
+                "isSelectable": true
+            },
+            "legend": {
+                "isSelected": true,
+                "isSelectable": true,
+                "showInfoSymbology": false,
+                "showControlledSymbology": false,
+                "columnWidth": 350
+            },
+            "timestamp": {
+                "isSelected": true,
+                "isSelectable": true
+            },
+            "timeout": 120000,
+            "cleanCanvas": false
+        },
+        "corsEverywhere": false,
+        "googleAPIKey": "",
+        "esriLibUrl": ""
+    },
+    "version": "3.2.0",
+    "language": "en-CA"
+}

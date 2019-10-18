@@ -4,8 +4,10 @@ export default class OSDP {
     };
     init(api: any): void;
     setZoomEndEvent(mapi: any): void;
+    preventZoom(mapi: any): void;
     addLayerByUUID(uuid: string): void;
     addLayerByConfig(mapId: string, config: any): void;
+    removeLayers(mapId: string): void;
     layersEvents(myFunction: any): void;
     testService(layer: any): void;
     setDefinitonQuery(mapId: string, layerId: string, query: string): void;
