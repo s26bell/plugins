@@ -10,7 +10,8 @@ const pluginList = {
     backToCart: path.join(SOURCE_PATH, 'backToCart'),
     coordInfo: path.join(SOURCE_PATH, 'coordInfo'),
     customExport: path.join(SOURCE_PATH, 'customExport'),
-    swiper: path.join(SOURCE_PATH, 'swiper')
+    swiper: path.join(SOURCE_PATH, 'swiper'),
+    geolocator: path.join(SOURCE_PATH, 'geolocator')
 };
 
 const hasLoader = ['enhancedTable', 'swiper'];
