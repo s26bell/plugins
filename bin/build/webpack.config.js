@@ -14,7 +14,7 @@ const pluginList = {
     geolocator: path.join(SOURCE_PATH, 'geolocator')
 };
 
-const hasLoader = ['enhancedTable', 'swiper'];
+const hasLoader = ['enhancedTable', 'swiper', 'geolocator'];
 
 module.exports = function(env = {}) {
     const config = {
