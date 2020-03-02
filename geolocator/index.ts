@@ -1,63 +1,224 @@
-import { PRINT_PANEL_BODY} from './templates';
-import { COLOR_PANEL} from './templates';
+import { INPUT_BOX} from './templates';
+import { AUTO_SELECT} from './templates';
+import { finished } from 'stream';
+import { title } from 'process';
+import { Observable, BehaviorSubject } from 'rxjs';
+
 export class Geolocator {
+    private urls = {
+        locate:  'http://geogratis.gc.ca/services/geolocation/en/locate?',
+        auto: 'http://geogratis.gc.ca/services/geolocation/en/autocomplete?',
+        sim: 'http://geogratis.gc.ca/services/geolocation/en/suggest?'
+    };
+    
+// observable to detect description modification
+private _complete: any;
+public getDescription(): Observable<string> {
+    return this._complete.asObservable();
+}
+private setDescription(newValue1: Array<string>): void {
+    this._complete.next(newValue1);
+}
+
     init(api: any){
         this.api = api;
+        this._complete = new BehaviorSubject<string>('Start');
+
         this.button = this.api.mapI.addPluginButton(
-            "Geolocator",
+            "{{ 'plugins.geolocator.title' | translate }}",
             this.onMenuItemClick()
         );
         this.make_panel();
-    }
 
-    make_panel(){
+        
+        
+    }
+    // Creates original instance of the panel when plugin is loaded
+    make_panel() {
+      
+        this.setAngular();
+        this.setAuto();
+
         this.panel = this.api.panels.create('geolocatorPanel');
 
+        // Size and location of original panel
         this.panel.element.css({
-            top: '0px',
+            top: '60px',
             left: '0px',
-            bottom: '50px',
+            bottom: '400px',
             width: '800px',
           });
+          // adds a close panel button and collapse panel button 
         let closeBtn = this.panel.header.closeButton;
-        this.panel.header.title = `Geolocator`;
-        this.panel.body = PRINT_PANEL_BODY;
-        //this.panel.body = COLOR_PANEL;
+        let toggleBtn = this.panel.header.toggleButton;
 
-        this.panel.open();
-    }  
+        // Adds title for panel which will change languages if that option is changed in the menu
+        this.panel.header.title = `plugins.geolocator.title`;
 
-    close_Panel(){
+        // Adds the input and select boxes to the panel 
+        this.panel.body = INPUT_BOX + AUTO_SELECT ;
+
+        this.open_Panel();
+
+    } // End of make_panel()  
+
+    // Next two functions open and close panels and add and remove/add the checkmark on the plugin button
+    close_Panel() {
         this.panel.close();
+        this.button.isActive = false;
     }
-    open_Panel(){
+    open_Panel() {
         this.panel.open();
+        this._RV.toggleSideNav('close');
+        this.button.isActive = true;
     }
-
-    onMenuItemClick(){
-        let identifySetting;
+    // 
+    // Slight bug, when the header X (close) button is hit it doesn't make this.button.isActive set to false 
+    //    
+    onMenuItemClick() {
         return () => {
-            this._RV.toggleSideNav('close');
-
-            // only set event if not already created
-            if (typeof this.handler === 'undefined') {
+            if (!this.button.isActive) {
                 this.open_Panel()
 
             } else {
                 this.close_Panel();
+             
             }
         };
-    }
+    } // End of onMenuItemClick function
 
+    // Creates a blank list upon the creation of a new panel and creates an autocomplete list when an address is entered into the input box
+    setAuto() {
+        const that = this;
+        
+     //Blank autocomplete list
+        this.api.agControllerRegister('autoCtrl', function () {
+
+          
+            this.items = [
+                { name: '', coords: '' },
+                { name: '', coords: '' },
+                { name: '', coords: '' },
+                { name: '', coords: '' },
+                { name: '', coords: '' }
+            ];
+            // Called everytime the input text is changed an there are new query results
+            that.getDescription().subscribe(value =>{
+               this.items = [
+                { name: value[0][0], coords: value[0][1] },
+                { name: value[1][0], coords: value[1][1] },
+                { name: value[2][0], coords: value[2][1] },
+                { name: value[3][0], coords: value[3][1] },
+                { name: value[4][0], coords: value[4][1] }
+                ];
+
+            });
+            // Called when an autoselect option is chosen and then initiates the zoom to location using zoom() function
+                this.getLoc = () => {
+                    let selectedItem: string = this.place
+                    let coordsLoc: Array<any>; 
+                    for (let i=0; i<5; ++i){
+                        if(selectedItem === this.items[i].name){
+                            coordsLoc = this.items[i].coords;
+                        }
+                    }
+
+
+                // geolocator is the identifier for the map found in geo-index.html 27
+                    zoom('geolocator', coordsLoc);
+                }
+        });
+
+    }// End of set Auto
+
+   
+// Used to query when the results of the input field are changed and initiates update of autocomplete box
+      setAngular() {
+        const that = this;
+            this.api.agControllerRegister('findCtrl', function () {
+
+                this.autoComplete = () => {
+                   // $("#loc").html("");
+                    let place: string = this.address;
+                    console.log(place);
+                    $.ajax({
+                        method: 'GET',
+                        url: that.urls.locate,
+                        cache: false,
+                        dataType: 'json',
+                        data: `q=${place}`
+                    }).then(json => {
+                      let found = json;
+                      console.log(found);
+                     
+                      let loc: Array<any> = [
+                          ['',], ['',], ['',], ['',], ['',]
+                        ];
+                        // gets first 5 results from the json and sends the title and coordinates to the setAuto() function
+                      for(let i=0; i<5; ++i){
+                            loc[i][0] = json[i].title;
+                            loc[i][1] = json[i].geometry.coordinates;
+                            //$("#loc").append(json[i].title);
+                      }
+                        that.setDescription(loc)
+                    });
+
+
+                }
+
+
+        });
+
+    } // End of setAngular
+
+
+} // End of Class Geolocator
+  
+
+// Receives a set of xy coordinates and uses them to move the map to that location and zoom in. 
+function zoom(mapId: string, addressCoords: Array<Number>){
+    const myMap = (<any>window).RAMP.mapById(mapId);
+    const ramp = (<any>window).RAMP;
+    const pt = new ramp.GEO.XY(addressCoords[0], addressCoords[1]);
+
+    myMap.zoom = 13;
+    myMap.setCenter(pt);
 }
+
+
+
+
+
+
 
 export interface Geolocator {
     api: any;
     translations: any;
     _RV: any;
-    handler: any;
     panel: any;
     button: any;
+    isActive: boolean;
+    name: string;
+    geometry: any;
+    loc: string;
+   
 }
+
+
+Geolocator.prototype.translations = {
+    'en-CA': {
+
+        title: 'Geolocation',
+        input: 'Your Address',
+        auto: 'Click here to choose the correct address'
+    },
+
+    'fr-CA': {
+        title: 'Géolocalisation',
+        input: 'Votre Addresse',
+        auto: 'Cliquez ici pour choisir la bonne adresse'
+    }
+};
+
 
 (<any>window).geolocator = Geolocator;
