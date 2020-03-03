@@ -28,9 +28,11 @@ private setDescription(newValue1: Array<string>): void {
             "{{ 'plugins.geolocator.title' | translate }}",
             this.onMenuItemClick()
         );
-        this.make_panel();
 
-        
+    
+            (<any>RAMP).mapAdded.subscribe(() => {
+                this.make_panel(); 
+            }); 
         
     }
     // Creates original instance of the panel when plugin is loaded
@@ -89,11 +91,11 @@ private setDescription(newValue1: Array<string>): void {
 
     // Creates a blank list upon the creation of a new panel and creates an autocomplete list when an address is entered into the input box
     setAuto() {
+       
         const that = this;
-        
      //Blank autocomplete list
         this.api.agControllerRegister('autoCtrl', function () {
-
+         
           
             this.items = [
                 { name: '', coords: '' },
@@ -114,7 +116,7 @@ private setDescription(newValue1: Array<string>): void {
 
             });
             // Called when an autoselect option is chosen and then initiates the zoom to location using zoom() function
-                this.getLoc = () => {
+                this.getLoc = (that) => {
                     let selectedItem: string = this.place
                     let coordsLoc: Array<any>; 
                     for (let i=0; i<5; ++i){
@@ -123,15 +125,26 @@ private setDescription(newValue1: Array<string>): void {
                         }
                     }
 
-
+                 
                 // geolocator is the identifier for the map found in geo-index.html 27
                     zoom('geolocator', coordsLoc);
+                    
+                    this.api.layersObj.addLayer('pointlayer');  
+                    const pointLayer = this.api.layers.getLayersById('pointlayer')[0]; 
+                
+                    const icon = 'M 50 0 100 100 50 200 0 100 Z';
+                
+                    let marker: any = new (<any>RAMP).GEO.Point("locGeo", [coordsLoc[0], coordsLoc[1]], {
+                        style: 'ICON',
+                        icon: icon,
+                        colour: [255, 0, 0, 0.75], width:25});
+                    pointLayer.addGeometry(marker);
                 }
         });
 
     }// End of set Auto
 
-   
+
 // Used to query when the results of the input field are changed and initiates update of autocomplete box
       setAngular() {
         const that = this;
@@ -171,6 +184,11 @@ private setDescription(newValue1: Array<string>): void {
 
     } // End of setAngular
 
+   
+
+
+
+
 
 } // End of Class Geolocator
   
@@ -183,9 +201,8 @@ function zoom(mapId: string, addressCoords: Array<Number>){
 
     myMap.zoom = 13;
     myMap.setCenter(pt);
+    
 }
-
-
 
 
 
