@@ -38,3 +38,29 @@ export const AUTO_SELECT = `
 
 </div>`;
 
+export const AUTO_COMPLETE = `
+
+<div class="">
+            <div class ng-controller="searchAuto as ctrl" id = "search">
+
+    <md-autocomplete 
+            placeholder = "{{ 'plugins.geolocator.auto' | translate }}"
+            md-no-cache="true"
+            md-min-length="0"
+            md-selected-item="ctrl.selectedItem" 
+            md-search-text-change= "ctrl.search()"
+            md-search-text="ctrl.searchText" 
+            md-items="item in ctrl.search" 
+            md-item-text="item.name">
+
+        <md-item-template>
+            <span>
+                 {{ item.name }}
+            </span>
+        </md-item-template>
+
+    </md-autocomplete>
+
+
+            </div>
+</div>`;

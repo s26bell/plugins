@@ -1,5 +1,6 @@
 import { INPUT_BOX} from './templates';
 import { AUTO_SELECT} from './templates';
+import { AUTO_COMPLETE} from './templates'
 import { finished } from 'stream';
 import { title } from 'process';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -40,6 +41,7 @@ private setDescription(newValue1: Array<string>): void {
       
         this.setAngular();
         this.setAuto();
+        this.setComplete();
 
         this.panel = this.api.panels.create('geolocatorPanel');
 
@@ -58,7 +60,7 @@ private setDescription(newValue1: Array<string>): void {
         this.panel.header.title = `plugins.geolocator.title`;
 
         // Adds the input and select boxes to the panel 
-        this.panel.body = INPUT_BOX + AUTO_SELECT ;
+        this.panel.body = INPUT_BOX + AUTO_SELECT + AUTO_COMPLETE;
 
         this.open_Panel();
 
@@ -89,11 +91,13 @@ private setDescription(newValue1: Array<string>): void {
         };
     } // End of onMenuItemClick function
 
+    
     // Creates a blank list upon the creation of a new panel and creates an autocomplete list when an address is entered into the input box
     setAuto() {
-       
-        const that = this;
-     //Blank autocomplete list
+        const that = this
+        const myMap = (<any>window).RAMP.mapById('geolocator');
+        myMap.layersObj.addLayer('pointlayer');
+       //Blank autocomplete list
         this.api.agControllerRegister('autoCtrl', function () {
          
           
@@ -124,21 +128,14 @@ private setDescription(newValue1: Array<string>): void {
                             coordsLoc = this.items[i].coords;
                         }
                     }
-
-                 
-                // geolocator is the identifier for the map found in geo-index.html 27
-                    zoom('geolocator', coordsLoc);
                     
-                    this.api.layersObj.addLayer('pointlayer');  
-                    const pointLayer = this.api.layers.getLayersById('pointlayer')[0]; 
-                
-                    const icon = 'M 50 0 100 100 50 200 0 100 Z';
-                
-                    let marker: any = new (<any>RAMP).GEO.Point("locGeo", [coordsLoc[0], coordsLoc[1]], {
-                        style: 'ICON',
-                        icon: icon,
-                        colour: [255, 0, 0, 0.75], width:25});
-                    pointLayer.addGeometry(marker);
+                    const myMap = (<any>window).RAMP.mapById('geolocator');
+                    const ramp = (<any>window).RAMP;
+                    const pointLayer = myMap.layers.getLayersById('pointlayer')[0]; 
+                    pointLayer.removeGeometry();
+                // geolocator is the identifier for the map found in geo-index.html 27
+                    pointZoom('geolocator', coordsLoc, myMap, ramp, pointLayer);
+                    
                 }
         });
 
@@ -151,7 +148,6 @@ private setDescription(newValue1: Array<string>): void {
             this.api.agControllerRegister('findCtrl', function () {
 
                 this.autoComplete = () => {
-                   // $("#loc").html("");
                     let place: string = this.address;
                     console.log(place);
                     $.ajax({
@@ -184,23 +180,72 @@ private setDescription(newValue1: Array<string>): void {
 
     } // End of setAngular
 
-   
+
+    setComplete() {
+            const that = this;
+
+            this.api.agControllerRegister( 'searchAuto', function() {
+                
+                
+                this.search = () => {
+                    let place: string = this.searchText;
+                    console.log(place);
+
+                   $.ajax({
+                        method: 'GET',
+                        url: that.urls.locate,
+                        cache: false,
+                        dataType: 'json',
+                        data: `q=${place}`
+                    }).then(json => {
+                      let found = json;
+                      console.log(found);
+                  
+                      this.optionText = [
+                        { name: json[1].title, coords: json[1].geometry },
+                        { name:json[2].title, coords: json[1].geometry  },
+                        { name: json[3].title, coords: json[1].geometry  },
+                        { name: json[4].title, coords: json[1].geometry  },
+                        { name: json[5].title, coords: json[1].geometry  }
+                    ];
+
+                    console.log(this.optionText[1]);
 
 
 
+                   });
+
+                }
+            });
+                
+
+
+
+
+
+
+
+    }
 
 
 } // End of Class Geolocator
   
 
-// Receives a set of xy coordinates and uses them to move the map to that location and zoom in. 
-function zoom(mapId: string, addressCoords: Array<Number>){
-    const myMap = (<any>window).RAMP.mapById(mapId);
-    const ramp = (<any>window).RAMP;
+// Receives a set of xy coordinates and uses them to move the map to that location and zoom in
+// Places a point on the map at the coordinate location
+function pointZoom(mapId: string, addressCoords: Array<Number>, myMap: any, ramp: any, pointLayer){
     const pt = new ramp.GEO.XY(addressCoords[0], addressCoords[1]);
-
+                
     myMap.zoom = 13;
     myMap.setCenter(pt);
+
+    const icon = 'M 50 0 100 100 50 100 0 100 Z';
+
+    let marker: any = new ramp.GEO.Point("locGeo", [addressCoords[0], addressCoords[1]], {
+        style: 'ICON',
+        icon: icon,
+        colour: [45, 45, 200, 100], width:25});
+    pointLayer.addGeometry(marker);
     
 }
 
