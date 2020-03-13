@@ -690,6 +690,39 @@
 	"plugins": {
 		"geolocator": {
 			"enable": true
-		}
+		},
+
+		"locationInfo": [
+		{
+			"title": "",
+			"coords": [0,0]
+		},
+		{
+			"title": "",
+			"coords": [0,0]
+		},
+		{
+			"title": "",
+			"coords": [0,0]
+		},
+		{
+			"title": "",
+			"coords": [0,0]
+		},
+		{
+			"title": "",
+			"coords": [0,0]
+		}	
+	],
+		"iconShape": "M 50 0 100 100 50 100 0 100 Z"
+		
+	
 	}
 }
+
+
+
+
+
+
+
