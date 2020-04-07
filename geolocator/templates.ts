@@ -3,7 +3,7 @@ export const INPUT_BOX = `
 
 <div class="" >
 
-    <div class ng-controller="findCtrl as ctrl" id= "box">
+    <div class ng-controller="hereCtrl as ctrl" id= "box">
         <md-input-container>
             <ngform>
                     <label for="location">{{ 'plugins.geolocator.input' | translate }}</label>
@@ -11,7 +11,7 @@ export const INPUT_BOX = `
                             type = "text"
                             id = "loc"
                             ng-model= "ctrl.address"
-                            ng-change= "ctrl.autoComplete()"
+                            ng-change= "ctrl.hereAuto()"
             </ngform>
         </md-input-container>
     </div>

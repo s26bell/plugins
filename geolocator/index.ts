@@ -1,7 +1,5 @@
 import { INPUT_BOX} from './templates';
 import {AUTO_LIST} from './templates'
-import { finished } from 'stream';
-import { title } from 'process';
 import { Observable, BehaviorSubject, config } from 'rxjs';
 
 export class Geolocator {
@@ -10,10 +8,10 @@ export class Geolocator {
         auto: 'http://geogratis.gc.ca/services/geolocation/en/autocomplete?',
         sim: 'http://geogratis.gc.ca/services/geolocation/en/suggest?',
         suggest: 'https://autocomplete.geocoder.api.here.com/6.2/suggest.json',
-        geoCode: 'https://geocoder.api.here.com/6.2/geocode.json'
+        GEOCODER_URL: 'https://geocoder.api.here.com/6.2/geocode.json'
+       
     };
-    private APPLICATION_ID= 'E1MhPKUsPzkp3YgELzOA';
-    private APPLICATION_CODE = '9fLr_V6KE80jJvYJXz8bW8aBgGoQLYlmico_GXcbRxY-A';
+   
 // observable to detect description modification
 private _complete: any;
 public getDescription(): Observable<object> {
@@ -99,39 +97,61 @@ private setDescription(newInfo: object): void {
         const that = this
         const myMap = (<any>window).RAMP.mapById('geolocator');
         myMap.layersObj.addLayer('pointlayer');
-       //Blank autocomplete list
+     
+        // Start of controller
         this.api.agControllerRegister('autoCtrl', function () {
          
             // Called everytime the input text is changed an there are new query results
             that.getDescription().subscribe(value =>{             
-                console.log(value[0]);
                this.list = [
-                { name: value[0].title, coords: value[0].coords },
-                { name: value[1].title, coords: value[1].coords },
-                { name: value[2].title, coords: value[2].coords },
-                { name: value[3].title, coords: value[3].coords },
-                { name: value[4].title, coords: value[4].coords }
+                { name: value[0].title, coords: value[0].locationID },
+                { name: value[1].title, coords: value[1].locationID },
+                { name: value[2].title, coords: value[2].locationID},
+                { name: value[3].title, coords: value[3].locationID },
+                { name: value[4].title, coords: value[4].locationID }
                 ];
+                this.finalCoords = [0,0];
             
             });
             // Called when an autoselect option is chosen and then initiates the zoom to location using zoom() function
                 this.getLoc = (place: any) => {
+                    console.log(place.item);
+
+            // Parameters for Here api call 
+            var params = '?locationid=' + encodeURIComponent(place.item.coords) +
+                '&app_id=' + that.APPLICATION_ID +
+                '&app_code=' + that.APPLICATION_CODE;
+           
+
+            $.ajax({
+                method: 'GET',
+                url: that.urls.GEOCODER_URL + params, // Second api call to get the coordinates
+                type: 'get',
+                dataType: 'json'
+            }).then(json => {
                
-                    let coordsLoc: Array<any> = place.item.coords;
+            console.log(json);
+            //Getting coordinates from the returned json 
+            this.finalCoords[1] = json.Response.View[0].Result[0].Location.DisplayPosition.Latitude;
+            this.finalCoords[0] = json.Response.View[0].Result[0].Location.DisplayPosition.Longitude;
+           
+          
+
+            let coordsLoc: Array<any> = this.finalCoords;
         
+            const myMap = (<any>window).RAMP.mapById('geolocator');
+            const ramp = (<any>window).RAMP;
+            const pointLayer = myMap.layers.getLayersById('pointlayer')[0]; 
+            pointLayer.removeGeometry();
+            const iconShape = that._RV.getConfig('plugins').iconShape;
+            // geolocator is the identifier for the map found in geo-index.html 27
+            pointZoom('geolocator', coordsLoc, myMap, ramp, pointLayer, iconShape);
+            //zooms to the coordinates on the map and adds an icon
+            }); 
+         }
+    });
 
-                    const myMap = (<any>window).RAMP.mapById('geolocator');
-                    const ramp = (<any>window).RAMP;
-                    const pointLayer = myMap.layers.getLayersById('pointlayer')[0]; 
-                    pointLayer.removeGeometry();
-                    const iconShape = that._RV.getConfig('plugins').iconShape;
-                // geolocator is the identifier for the map found in geo-index.html 27
-                    pointZoom('geolocator', coordsLoc, myMap, ramp, pointLayer, iconShape);
-                    
-                }
-        });
-
-    }// End of set Auto
+}// End of set Auto
 
 
 // Used to query when the results of the input field are changed and initiates update of autocomplete box
@@ -152,49 +172,63 @@ private setDescription(newInfo: object): void {
                       let found = json;
                       console.log(found);
                       let locat: object = that._RV.getConfig('plugins').locationInfo
-                        // gets first 5 results from the json and sends the title and coordinates to the setAuto() function
+                    // gets first 5 results from the json and sends the title and coordinates to the setAuto() function
                       for(let i=0; i<5; ++i){
                          
                             locat[i].title = json[i].title;
                             locat[i].coords[0] = json[i].geometry.coordinates[0];
                             locat[i].coords[1] = json[i].geometry.coordinates[1];
                         }
-                        console.log(locat[0].coords)
-                        that.setDescription(locat)
+                        console.log(locat[0].coords);
+                        that.setDescription(locat);
                     });
 
-
                 }
+         });
+            
 
+            this.api.agControllerRegister('hereCtrl', function () {
                 // Separate function meant for use with the Here api but will reference the same function to make the list and zoom to the selected location
                 this.hereAuto = () => {
                     let place: string = this.address;
                     console.log(place);
-             
-                    var params = '?query=' + encodeURIComponent(place) + "&country=CAN" +// The search text which is the basis of the query
+               
+                    // Parameters for api call using Here api
+                    var params = '?query=' + place + "&country=CAN" +// The search text (place) which is the basis of the query
+                    '&maxresults=5'+
                     '&app_id=' + that.APPLICATION_ID +
-                    '&app_code=' + that.APPLICATION_CODE;
+                    '&app_code=' + that.APPLICATION_CODE ;
+                   
                     $.ajax({
                         method: 'GET',
-                        url: that.urls.geoCode + params,
+                        url: that.urls.suggest + params,
                         cache: false,
                         dataType: 'json',
-                        //data: `q=${place}`
                     }).then(json => {
                       let found = json;
                       console.log(found);
-                   
-                     
+                        
+                      let locat: object = that._RV.getConfig('plugins').locationInfo
+                        // gets first 5 results from the json and sends the title and coordinates to the setAuto() function
+                      
+                        for(let i=0; i<5; ++i){
+                         
+                            locat[i].title = json.suggestions[i].label;
+                            locat[i].locationID = json.suggestions[i].locationId;
+                            // locat[i].coords[1] = json[i].geometry.coordinates[1];
+                        }
+                        console.log(locat[0].locationID);
+                        that.setDescription(locat);
                     });
+            
 
-
-                }
-
+            }//end of hereAuto
 
         });
 
+    
     } // End of setAngular
-
+     
 
     
 
@@ -204,6 +238,7 @@ private setDescription(newInfo: object): void {
 // Receives a set of xy coordinates and uses them to move the map to that location and zoom in
 // Places a point on the map at the coordinate location
 function pointZoom(mapId: string, addressCoords: Array<Number>, myMap: any, ramp: any, pointLayer:any, iconShape: string){
+    console.log(addressCoords);
     const pt = new ramp.GEO.XY(addressCoords[0], addressCoords[1]);
                 
     myMap.zoom = 13;

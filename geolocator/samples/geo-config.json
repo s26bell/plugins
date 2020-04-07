@@ -695,23 +695,28 @@
 		"locationInfo": [
 		{
 			"title": "",
-			"coords": [0,0]
+			"coords": [0,0],
+			"locationID": ""
 		},
 		{
 			"title": "",
-			"coords": [0,0]
+			"coords": [0,0],
+			"locationID": ""
 		},
 		{
 			"title": "",
-			"coords": [0,0]
+			"coords": [0,0],
+			"locationID": ""
 		},
 		{
 			"title": "",
-			"coords": [0,0]
+			"coords": [0,0],
+			"locationID": ""
 		},
 		{
 			"title": "",
-			"coords": [0,0]
+			"coords": [0,0],
+			"locationID": ""
 		}	
 	],
 		"iconShape": "M 50 0 100 100 50 100 0 100 Z"
