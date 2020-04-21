@@ -1,8 +1,6 @@
 import { INPUT_BOX } from './templates';
 import { AUTO_LIST } from './templates'
 import { Observable, BehaviorSubject } from 'rxjs';
-import { resolve } from 'dns';
-import { rejects } from 'assert';
 
 export class Geolocator {
 private _applicationID= ''; // HERE api verification is not credentials must be provided separately
@@ -13,7 +11,6 @@ private _cssPanel =  {top: '60px',
                     width: '800px'};
 // Observable to detect description modification
 private _complete: any;
-private _finalCoords: Array<any>;
 public getDescription(): Observable<object> {
     return this._complete.asObservable();
 }
@@ -48,7 +45,7 @@ private setDescription(newInfo: object): void {
         this.panel.header.title =  Geolocator.prototype.translations[this._RV.getCurrentLang()].title;
 
         // Adds the input and select boxes to the panel 
-        this.panel.body = INPUT_BOX + AUTO_LIST ; 
+        this.panel.body = INPUT_BOX; //+ AUTO_LIST ; 
 
         this.panel.open();
         this.button.isActive=!this.button.isActive;
@@ -79,51 +76,43 @@ private setDescription(newInfo: object): void {
 
         this.api.agControllerRegister('autoCtrl', function () {
         // Called everytime the input text is changed an there are new query results
-        
-            that.getDescription().subscribe((value: object) =>{             
-               this.list = [
-                { name: "", location: "" },
-                { name: "", location: "" }, 
-                { name: "", location: "" },
-                { name: "", location: "" },
-                { name: "", location: "" }
-                ];
-                for(let i in this.list) {
-                    this.list[i].name = value[i].title;
-                    this.list[i].location = value[i].locationID;
-                }
-              this._finalCoords = [0,0];
-            });
+        this.list = [];
+       
 
-            // Called when an autoselect option is chosen and then initiates the zoom to location using zoom() function
-            this.getLoc = (place: any) => {
-                console.log(place.item.location);
-
-            // Parameters for Here api call 
-            const params = `?locationid=  ${encodeURIComponent(place.item.location)}
-            &app_id=  ${that._applicationID}
-            &app_code= ${that._applicationCODE}`;
+        this.autoComplete = () => {
+            let place: string = this.address;
+            console.log(place);
             
-            new Promise(resolve => {
+            new Promise( resolve => {
             $.ajax({
                 method: 'GET',
-                url: `${that._RV.getConfig('plugins').geolocator.GEOCODER_URL}${params}`, // Second api call to get the coordinates
+                url: that._RV.getConfig('plugins').geolocator.locate,
                 cache: false,
-                type: 'get',
                 dataType: 'json',
+                data: `q=${place}`,
                 success: function(json){
-                console.log("json", json);
-                resolve(json)
-               },
+                    resolve(json);
+                }
             });
-            }).then((json: any) => {
-            console.log(json);
-            
-            //Getting coordinates from the returned json 
-            this._finalCoords[0] = json.Response.View[0].Result[0].Location.DisplayPosition.Longitude;
-            this._finalCoords[1] = json.Response.View[0].Result[0].Location.DisplayPosition.Latitude;
+            }).then(json => {
+                console.log(json);
+                let locat: object = that._RV.getConfig('plugins').locationInfo
+                // Gets first 5 results from the json and sends the title and coordinates to the setAuto() function
+                
+                // for (let i in locat) {
+                //     locat[i].title = json[i].title;
+                //     locat[i].coords[0] = json[i].geometry.coordinates[0];
+                //     locat[i].coords[1] = json[i].geometry.coordinates[1];
+                // }
+                this.setList(json);
+                console.log(this.list);
+             });
+        }  
+            // Called when an autoselect option is chosen and then initiates the zoom to location using zoom() function
+            this.getLoc = (place: any) => {
+                console.log(place.item);
            
-            let coordsLoc: Array<any> = this._finalCoords;
+            let coordsLoc: Array<any> = place.item.location;
         
             const myMap = (<any>window).RAMP.mapById('geolocator');
             const ramp = (<any>window).RAMP;
@@ -135,11 +124,22 @@ private setDescription(newInfo: object): void {
             pointZoom('geolocator', coordsLoc, myMap, ramp, pointLayer, iconShape);
 
             //Zooms to the coordinates on the map and adds an icon
-            }); // Put all of then inside a function
-
-            
          }
-    });// End of getLoc
+    
+
+          this.setList = (locat: any) => {
+              const myList = [];
+                for(let i in locat) {
+                    myList.push({ name: locat[i].title, location: locat[i].geometry.coordinates });
+                }
+                this.list = myList;
+                console.log(this.list);
+        }
+        
+       
+    });
+
+
 
 }// End of set Auto
 
@@ -148,18 +148,24 @@ private setDescription(newInfo: object): void {
       setAngular() {
         const that = this;
             this.api.agControllerRegister('findCtrl', function () {   
+                
                 this.autoComplete = () => {
                     let place: string = this.address;
                     console.log(place);
+                    
+                    new Promise( resolve => {
                     $.ajax({
                         method: 'GET',
                         url: that._RV.getConfig('plugins').geolocator.locate,
                         cache: false,
                         dataType: 'json',
-                        data: `q=${place}`
+                        data: `q=${place}`,
+                        success: function(json){
+                            console.log("json", json);
+                            resolve(json);
+                        }
+                    });
                     }).then(json => {
-                      let found = json;
-                      console.log(found);
                       let locat: object = that._RV.getConfig('plugins').locationInfo
                       // Gets first 5 results from the json and sends the title and coordinates to the setAuto() function
                       
@@ -168,7 +174,6 @@ private setDescription(newInfo: object): void {
                             locat[i].coords[0] = json[i].geometry.coordinates[0];
                             locat[i].coords[1] = json[i].geometry.coordinates[1];
                         }
-                        console.log(locat[0].coords);
                         that.setDescription(locat);
                     });
                 }

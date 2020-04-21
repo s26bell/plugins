@@ -690,7 +690,7 @@
 	"plugins": {
 		"geolocator": {
 			"enable": true,
-			"locate":  "http://geogratis.gc.ca/services/geolocation/en/locate?",
+			"locate":  "https://geogratis.gc.ca/services/geolocation/en/locate?",
 			"suggest": "https://autocomplete.geocoder.api.here.com/6.2/suggest.json",
 			"GEOCODER_URL": " https://geocoder.api.here.com/6.2/geocode.json"	
 		},
