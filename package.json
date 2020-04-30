@@ -58,6 +58,7 @@
         "gh-pages": "1.1.0",
         "here-js-api": "^1.0.11",
         "jquery": "^3.4.1",
+        "jsdoc": "^3.6.4",
         "log-prefix": "^0.1.1",
         "log-timestamp": "^0.3.0",
         "rxjs": "^6.3.3"

@@ -1,36 +1,40 @@
 import { INPUT_BOX } from './templates';
-import { AUTO_LIST } from './templates'
-import { Observable, BehaviorSubject } from 'rxjs';
-
+import { NRCan } from './nrcan';
+import { Here } from './here';
 export class Geolocator {
-private _applicationID= ''; // HERE api verification is not credentials must be provided separately
-private _applicationCODE = ''; 
 private _cssPanel =  {top: '60px',
-                    left: '0px',
-                    bottom: '400px',
-                    width: '800px'};
-// Observable to detect description modification
-private _complete: any;
-public getDescription(): Observable<object> {
-    return this._complete.asObservable();
-}
-private setDescription(newInfo: object): void {
-    this._complete.next(newInfo);
-}
+                     left: '0px',
+                     bottom: '400px',
+                     width: '800px'};
+public _finalCoords: Array<any>;
 
-    init(api: any, config: any) {
+    /**
+    * Plugin init
+    * @function init
+    * @param {Any} api the viewer api
+    */
+    init(api: any) {
         this.api = api;
-        this._complete = new BehaviorSubject<string>('     ');
         this.button = this.api.mapI.addPluginButton(
             Geolocator.prototype.translations[this._RV.getCurrentLang()].title, this.onMenuItemClick());
         (<any>RAMP).mapAdded.subscribe(() => { // Must wait for the map to be defined so the panel will load properly
-            this.make_panel(); 
+            this.makePanel(); 
         }); 
     }
-    // Creates original instance of the panel when plugin is loaded
-    make_panel() {
-        this.setAngular();
-        this.setAuto();
+
+    /**
+    * Creates original instance of the panel when plugin is loaded
+    * @function makePanel
+    * @class Decides which class to activate based on the config file chosen 
+    */
+    makePanel() {
+        // Chose which api to use
+        if(this._RV.getConfig('plugins').geolocator.api.type === "Here") {
+            new Here(this);
+        }
+        else if(this._RV.getConfig('plugins').geolocator.api.type === "NRCan") {
+            new NRCan(this);
+        }
 
         this.panel = this.api.panels.create('geolocatorPanel');;
 
@@ -45,16 +49,17 @@ private setDescription(newInfo: object): void {
         this.panel.header.title =  Geolocator.prototype.translations[this._RV.getCurrentLang()].title;
 
         // Adds the input and select boxes to the panel 
-        this.panel.body = INPUT_BOX; //+ AUTO_LIST ; 
+        this.panel.body = INPUT_BOX;
 
         this.panel.open();
         this.button.isActive=!this.button.isActive;
-    } // End of make_panel()  
+    } 
 
-    // 
-    // Slight bug, when the header X (close) button is hit it doesn't make this.button.isActive set to false 
-    // 
-
+     /**
+    * Event to fire on side menu item click. Open/Close the panel
+    * @function onMenuItemClick
+    * @return {function} The function to run, open/close
+    */
     onMenuItemClick() {
         return () => {
             this.button.isActive=!this.button.isActive;
@@ -67,174 +72,32 @@ private setDescription(newInfo: object): void {
         };
     }
 
-    // Creates a blank list upon the creation of a new panel and creates an autocomplete list when an address is entered into the input box
-    setAuto() {
-        const that = this;
-        const myMap = (<any>window).RAMP.mapById('geolocator');
-        myMap.layersObj.addLayer('pointLayer');
-        // Start of controller
-
-        this.api.agControllerRegister('autoCtrl', function () {
-        // Called everytime the input text is changed an there are new query results
-        this.list = [];
-       
-
-        this.autoComplete = () => {
-            let place: string = this.address;
-            console.log(place);
-            
-            new Promise( resolve => {
-            $.ajax({
-                method: 'GET',
-                url: that._RV.getConfig('plugins').geolocator.locate,
-                cache: false,
-                dataType: 'json',
-                data: `q=${place}`,
-                success: function(json){
-                    resolve(json);
-                }
-            });
-            }).then(json => {
-                console.log(json);
-                let locat: object = that._RV.getConfig('plugins').locationInfo
-                // Gets first 5 results from the json and sends the title and coordinates to the setAuto() function
-                
-                // for (let i in locat) {
-                //     locat[i].title = json[i].title;
-                //     locat[i].coords[0] = json[i].geometry.coordinates[0];
-                //     locat[i].coords[1] = json[i].geometry.coordinates[1];
-                // }
-                this.setList(json);
-                console.log(this.list);
-             });
-        }  
-            // Called when an autoselect option is chosen and then initiates the zoom to location using zoom() function
-            this.getLoc = (place: any) => {
-                console.log(place.item);
-           
-            let coordsLoc: Array<any> = place.item.location;
-        
-            const myMap = (<any>window).RAMP.mapById('geolocator');
-            const ramp = (<any>window).RAMP;
-            const pointLayer = myMap.layers.getLayersById('pointLayer')[0]; 
-            pointLayer.removeGeometry();
-            const iconShape = that._RV.getConfig('plugins').iconShape;
-
-            // Geolocator is the identifier for the map found in geo-index.html 27
-            pointZoom('geolocator', coordsLoc, myMap, ramp, pointLayer, iconShape);
-
-            //Zooms to the coordinates on the map and adds an icon
-         }
-    
-
-          this.setList = (locat: any) => {
-              const myList = [];
-                for(let i in locat) {
-                    myList.push({ name: locat[i].title, location: locat[i].geometry.coordinates });
-                }
-                this.list = myList;
-                console.log(this.list);
-        }
-        
-       
-    });
-
-
-
-}// End of set Auto
-
-
-      // Used to query when the results of the input field are changed and initiates update of autocomplete box
-      setAngular() {
-        const that = this;
-            this.api.agControllerRegister('findCtrl', function () {   
-                
-                this.autoComplete = () => {
-                    let place: string = this.address;
-                    console.log(place);
-                    
-                    new Promise( resolve => {
-                    $.ajax({
-                        method: 'GET',
-                        url: that._RV.getConfig('plugins').geolocator.locate,
-                        cache: false,
-                        dataType: 'json',
-                        data: `q=${place}`,
-                        success: function(json){
-                            console.log("json", json);
-                            resolve(json);
-                        }
-                    });
-                    }).then(json => {
-                      let locat: object = that._RV.getConfig('plugins').locationInfo
-                      // Gets first 5 results from the json and sends the title and coordinates to the setAuto() function
-                      
-                      for (let i in locat) {
-                            locat[i].title = json[i].title;
-                            locat[i].coords[0] = json[i].geometry.coordinates[0];
-                            locat[i].coords[1] = json[i].geometry.coordinates[1];
-                        }
-                        that.setDescription(locat);
-                    });
-                }
-         });
-            this.api.agControllerRegister('hereCtrl', function () {
-                // Separate function meant for use with the Here api but will reference the same function to make the list and zoom to the selected location
-               
-                this.hereAuto = () => {
-                    const place: string = this.address;
-                    console.log(place);
-                    // Parameters for api call using Here api
-
-                    const params = `?query= ${place} &country=CAN 
-                    &maxresults=5
-                    &app_id= ${that._applicationID}
-                    &app_code= ${that._applicationCODE}` ;
-                    // The search text (place) which is the basis of the query
-                  
-                    new Promise(resolve => {
-                    $.ajax({
-                        method: 'GET',
-                        url: `${that._RV.getConfig('plugins').geolocator.suggest}${params}`,
-                        cache: false,
-                        dataType: 'json',
-                        success: function(json){
-                        console.log("json", json);
-                            resolve(json);
-                      }
-                    });
-                    }).then((json: any) => {
-                      
-                      console.log(json);
-                      let locat: object = that._RV.getConfig('plugins').locationInfo
-
-                      // Gets first 5 results from the json and sends the title and coordinates to the setAuto() function
-                      
-                      for (let i in locat) {
-                            locat[i].title = json.suggestions[i].label;
-                            locat[i].locationID = json.suggestions[i].locationId;
-                      }
-                      that.setDescription(locat);
-                    });
-            }// End of hereAuto
+    /**
+     * Receives a set of xy coordinates and uses them to move the map to that location and zoom in
+     * Places a point on the map at the coordinate location
+     * @param {string} mapId Map identifier found in geo-index.html
+     * @param {Array<Number>} addressCoords Coords to zoom to & place the icon
+     * @param {any} myMap Api variable
+     * @param {any} ramp Api
+     * @param {any} pointLayer Layer the icon is added to 
+     * @param {string} iconShape Info about the shape being placed
+     * @static 
+     */
+    static pointZoom(mapId : string, addressCoords : Array<Number>, myMap : any, ramp : any, pointLayer : any, iconShape : string){ 
+        const pt = new ramp.GEO.XY(addressCoords[0], addressCoords[1]);          
+        myMap.zoom = 13;
+        myMap.setCenter(pt);
+        let marker: any = new ramp.GEO.Point('locGeo', [addressCoords[0], addressCoords[1]], {
+            style : 'ICON',
+            icon : iconShape,
+            colour : [45, 45, 200, 100], 
+            width : 25
         });
-    } // End of setAngular
+        pointLayer.addGeometry(marker);
+    }
+
 } // End of Class Geolocator
 
-// Receives a set of xy coordinates and uses them to move the map to that location and zoom in
-// Places a point on the map at the coordinate location
-function pointZoom(mapId : string, addressCoords : Array<Number>, myMap : any, ramp : any, pointLayer : any, iconShape : string){
-    const pt = new ramp.GEO.XY(addressCoords[0], addressCoords[1]);          
-    myMap.zoom = 13;
-    myMap.setCenter(pt);
-    let marker: any = new ramp.GEO.Point('locGeo', [addressCoords[0], addressCoords[1]], {
-        style : 'ICON',
-        icon : iconShape,
-        colour : [45, 45, 200, 100], 
-        width : 25
-    });
-    pointLayer.addGeometry(marker);
-}
 export interface Geolocator {
     api: any;
     translations: any;
@@ -262,3 +125,6 @@ Geolocator.prototype.translations = {
 };
 
 (<any>window).geolocator = Geolocator;
+
+
+

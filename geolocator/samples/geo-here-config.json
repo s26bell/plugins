@@ -690,40 +690,14 @@
 	"plugins": {
 		"geolocator": {
 			"enable": true,
-			"locate":  "https://geogratis.gc.ca/services/geolocation/en/locate?",
-			"suggest": "https://autocomplete.geocoder.api.here.com/6.2/suggest.json",
-			"GEOCODER_URL": " https://geocoder.api.here.com/6.2/geocode.json"	
-		},
-		"locationInfo": [
-		{
-			"title": "",
-			"coords": [0,0],
-			"locationID": ""
-		},
-		{
-			"title": "",
-			"coords": [0,0],
-			"locationID": ""
-		},
-		{
-			"title": "",
-			"coords": [0,0],
-			"locationID": ""
-		},
-		{
-			"title": "",
-			"coords": [0,0],
-			"locationID": ""
-		},
-		{
-			"title": "",
-			"coords": [0,0],
-			"locationID": ""
-		}	
-	],
-		"iconShape": "M 50 0 100 100 50 100 0 100 Z"
-		
-	
+			"api": {
+				"type": "Here",
+				 "url": [{"name": "suggest", "value": "https://autocomplete.geocoder.api.here.com/6.2/suggest.json"},
+					    {"name": "geocode", "value": "https://geocoder.api.here.com/6.2/geocode.json"}]	
+			},
+			"iconShape": "M 50 0 100 100 50 100 0 100 Z"	
+		}
+
 	}
 }
 
